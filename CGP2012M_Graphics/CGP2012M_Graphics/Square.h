@@ -134,8 +134,9 @@ public:
 		glDeleteShader(fSh4.shaderID);
 
 		//load the texture file
-		tex.load("..//..//Assets//Textures//United_Kingdom.png");
+		tex.load("..//..//Assets//Textures//United_Kingdom.jpg");
 	};
+
 
 	//define vertices for the square
 	GLfloat sq_vertices[32] = {

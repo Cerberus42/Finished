@@ -181,6 +181,8 @@ int main(int argc, char *argv[]) {
 	int circleTransformLocation;
 	int backgroundColourLocation;
 	int ambientIntensityLocation;
+	int blocklocation;	
+	int b1rr;
 
 	//light colour initial setting
 	lightCol = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -203,18 +205,15 @@ int main(int argc, char *argv[]) {
 	b1t = glm::mat4(1.0f);
 	b1r = glm::mat4(1.0f);
 	b1s = glm::mat4(1.0f);
-	b2t = glm::mat4(1.0f);
-	b2r = glm::mat4(1.0f);
-	b2s = glm::mat4(1.0f);
 
-
-	int b1rr;
+	//brick
 	glUseProgram(brick1.shaderProgram5);
 	b1t = glm::translate(b1t, glm::vec3(2.0f, 1.0f, 0.0f));
 	b1rr = glGetUniformLocation(brick1.shaderProgram5, "uModel");
 	glUniformMatrix4fv(b1rr, 1, GL_FALSE, glm::value_ptr(b1t*b1r*b1s));
-	brick1.setBuffers();
 	int bricklocation;
+
+
 	//once only scale to background
 	b_scaleFactor = { 19.0f, 14.0f, 1.0f };
 	backgroundScale = glm::scale(backgroundScale, glm::vec3(b_scaleFactor));
@@ -230,12 +229,13 @@ int main(int argc, char *argv[]) {
 
 
 
-	//once only translate - translate triangle into centre of screen
-	glUseProgram(tri_T.shaderProgram4);
+	//once only translate - translate player into centre of screen
+	glUseProgram(brick1.shaderProgram5);
 	translate = glm::translate(translate, glm::vec3(2.0f, 0.5f, 0.0f));
-	modelLocation = glGetUniformLocation(tri_T.shaderProgram4, "uModel");
+	modelLocation = glGetUniformLocation(brick1.shaderProgram5, "uModel");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(translate*rotate*scale));
 	tri_T.setBuffers();
+	brick1.setBuffers();
 
 	//once only translate - translate circle into centre of screen
 	circleTranslate = glm::translate(circleTranslate, glm::vec3(centreX, centreY, 0.0f));
@@ -279,9 +279,17 @@ int main(int argc, char *argv[]) {
 		glBindTexture(GL_TEXTURE_2D, texArray[0].texture);
 		background.render();
 
+
+		//set projection matrix uniform and other triangle values
+		projectionLocation = glGetUniformLocation(brick1.shaderProgram5, "uProjection");
+		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+		modelLocation = glGetUniformLocation(brick1.shaderProgram5, "uModel");
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(b1t*b1r*b1s));
+		viewLocation = glGetUniformLocation(brick1.shaderProgram5, "uView");
+		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		//specify shader program to use
 		//to allow transform uniform to be passed in
-		glUseProgram(tri_T.shaderProgram4);
+		glUseProgram(brick1.shaderProgram5);
 
 		//set projection matrix uniform and other triangle values
 		projectionLocation = glGetUniformLocation(tri_T.shaderProgram4, "uProjection");
@@ -292,7 +300,7 @@ int main(int argc, char *argv[]) {
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		
 		//draw the triangle with a shader and texture
-		tri_T.render();
+		//tri_T.render();
 		brick1.render();
 		//set to wireframe so we can see the circles
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
